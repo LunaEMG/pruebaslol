@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  # 1. Nuestro servidor Express
+  api:
+    image: mi-app-express # La imagen que acabamos de crear
+    build: .
+    ports:
+      - "3000:3000"
+
+  # 2. Nuestra base de datos PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment: # Configuraciones iniciales para la base de datos
+      POSTGRES_USER: mi_usuario
+      POSTGRES_PASSWORD: mi_password
+      POSTGRES_DB: mi_base_datos
+    ports:
+      - "5432:5432"
