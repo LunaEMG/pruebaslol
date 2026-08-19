@@ -28,6 +28,21 @@ app.get('/', async (req, res) => {
   }
 });
 
+// 1. Traductor para leer los datos que envía Twilio
+app.use(express.urlencoded({ extended: true }));
+
+// 2. Nuestra "puerta" para recibir los mensajes
+app.post('/whatsapp', (req, res) => {
+  const mensajeEntrante = req.body.Body; // Twilio manda el texto en la propiedad "Body"
+  const numeroRemitente = req.body.From; // Y el número del usuario en "From"
+
+  console.log(`ola q tal.  Mensaje recibido de ${numeroRemitente}: ${mensajeEntrante}`);
+
+  // Le confirmamos a Twilio que recibimos el paquete correctamente
+  res.sendStatus(200); 
+});
+
+
 app.listen(puerto, () => {
   console.log(`Servidor activo en el puerto ${puerto}`);
 });
