@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const cron = require('node-cron');
 
 const app = express();
 // 1. Aquí usamos la lógica del puerto que armaste
@@ -10,6 +11,11 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false } // Requisito para bases de datos en la nube
 });
+
+cron.schedule('* * * * *', () => {
+  console.log('Tarea programada. hora actual: ', new Date().toISOString());
+});
+
 
 // 3. Una ruta básica de prueba
 app.get('/', async (req, res) => {
