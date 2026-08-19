@@ -1,31 +1,27 @@
 const express = require('express');
-const { Pool } = require('pg'); // Importamos la herramienta para PostgreSQL
+const { Pool } = require('pg');
 
 const app = express();
-const port = 3000;
+// 1. Aquí usamos la lógica del puerto que armaste
+const puerto = process.env.PORT || 3000;
 
-// Configuramos la conexión con los mismos datos del docker-compose.yml
+// 2. Conectamos a la base de datos de Neon de forma segura
 const pool = new Pool({
-  user: 'mi_usuario',
-  host: 'db', // ¡Ojo aquí!
-  database: 'mi_base_datos',
-  password: 'mi_password',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // Requisito para bases de datos en la nube
 });
 
+// 3. Una ruta básica de prueba
 app.get('/', async (req, res) => {
   try {
-    // Le pedimos a la base de datos que nos diga qué hora es
     const resultado = await pool.query('SELECT NOW()');
-    const horaDB = resultado.rows[0].now;
-    
-    res.send(`¡Hola Mundo con Docker! 🐳 La hora en la base de datos es: ${horaDB}`);
+    res.send(`¡Hola desde Render! Hora de la base de datos: ${resultado.rows[0].now}`);
   } catch (error) {
-    console.error('Error en la base de datos:', error);
-    res.status(500).send('Hubo un error conectando a PostgreSQL');
+    console.error(error);
+    res.status(500).send('Error conectando a la base de datos');
   }
 });
 
-app.listen(port, () => {
-  console.log(`¡NUEVO servidor con BD escuchando en el puerto ${port}!`);
+app.listen(puerto, () => {
+  console.log(`Servidor activo en el puerto ${puerto}`);
 });
